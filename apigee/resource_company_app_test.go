@@ -2,12 +2,13 @@ package apigee
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/zambien/go-apigee-edge"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/zambien/go-apigee-edge"
 )
 
 func TestAccCompanyApp_Updated(t *testing.T) {
@@ -70,23 +71,38 @@ func testAccCheckCompanyAppExists(n string, name string) resource.TestCheckFunc 
 const testAccCheckCompanyAppConfigRequired = `
 resource "apigee_company" "foo_company" {
    name = "foo_company"
+   lifecycle {
+      ignore_changes = [
+         apps,
+      ]
+   }
 }
 
 resource "apigee_company_app" "foo_company_app" {
    name = "foo_company_app_name"
    company_name = "${apigee_company.foo_company.name}"
+   callback_url = ""
 }
 `
 
 const testAccCheckCompanyAppConfigUpdated = `
 resource "apigee_company" "foo_company" {
    name = "foo_company"
+   lifecycle {
+      ignore_changes = [
+         apps,
+      ]
+   }
 }
 
 resource "apigee_product" "foo_product" {
    name = "foo_product"
    approval_type = "auto"
    scopes = ["READ"]
+   description = ""
+   quota = ""
+   quota_interval = ""
+   quota_time_unit = ""
 }
 
 resource "apigee_company_app" "foo_company_app" {

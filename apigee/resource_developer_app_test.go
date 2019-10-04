@@ -2,13 +2,14 @@ package apigee
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/zambien/go-apigee-edge"
 	"log"
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/zambien/go-apigee-edge"
 )
 
 func TestAccDeveloperApp_Updated(t *testing.T) {
@@ -81,11 +82,18 @@ resource "apigee_developer" "foo_developer" {
    first_name = "foo"
    last_name = "test"
    user_name = "footest"
+   apps = []
+   lifecycle {
+      ignore_changes = [
+         apps,
+      ]
+   }
 }
 
 resource "apigee_developer_app" "foo_developer_app" {
    name = "foo_developer_app_name"
    developer_email = "${apigee_developer.foo_developer.email}"
+   callback_url = ""
 }
 `
 
@@ -95,24 +103,42 @@ resource "apigee_developer" "foo_developer" {
    first_name = "foo"
    last_name = "test"
    user_name = "footest"
+   apps = []
+   lifecycle {
+      ignore_changes = [
+         apps,
+      ]
+   }
 }
 
 resource "apigee_product" "aaa_product" {
    name = "aaa_product"
    approval_type = "auto"
    scopes = ["READ"]
+   description = ""
+   quota = ""
+   quota_interval = ""
+   quota_time_unit = ""
 }
 
 resource "apigee_product" "bbb_product" {
    name = "bbb_product"
    approval_type = "auto"
    scopes = ["READ"]
+   description = ""
+   quota = ""
+   quota_interval = ""
+   quota_time_unit = ""
 }
 
 resource "apigee_product" "foo_product" {
    name = "foo_product"
    approval_type = "auto"
    scopes = ["READ"]
+   description = ""
+   quota = ""
+   quota_interval = ""
+   quota_time_unit = ""
 }
 
 
