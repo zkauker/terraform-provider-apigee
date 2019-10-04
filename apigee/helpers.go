@@ -1,11 +1,18 @@
 package apigee
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/zambien/go-apigee-edge"
 	"reflect"
 	"sort"
+
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/zambien/go-apigee-edge"
 )
+
+func isTerraformVersionPriorTo(minVerson string) bool {
+	tfVersonStr := terraform.VersionString()
+	return tfVersonStr < minVerson
+}
 
 func flattenStringList(list []string) []interface{} {
 

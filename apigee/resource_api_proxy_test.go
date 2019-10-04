@@ -2,22 +2,31 @@ package apigee
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/zambien/go-apigee-edge"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/zambien/go-apigee-edge"
 )
 
 func TestAccProxy_Updated(t *testing.T) {
+
+	vTestAccCheckProxyConfigRequired := testAccCheckProxyConfigRequiredTF12
+	vTestAccCheckProxyConfigUpdated := testAccCheckProxyConfigUpdatedTF12
+	if isTerraformVersionPriorTo("0.12") {
+		vTestAccCheckProxyConfigRequired = testAccCheckProxyConfigRequired
+		vTestAccCheckProxyConfigUpdated = testAccCheckProxyConfigUpdated
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckProxyDestroy,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccCheckProxyConfigRequired,
+				Config: vTestAccCheckProxyConfigRequired,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckProxyExists("apigee_api_proxy.foo_api_proxy", "foo_proxy_terraformed"),
 					resource.TestCheckResourceAttr(
@@ -30,7 +39,7 @@ func TestAccProxy_Updated(t *testing.T) {
 			},
 
 			resource.TestStep{
-				Config: testAccCheckProxyConfigUpdated,
+				Config: vTestAccCheckProxyConfigUpdated,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckProxyExists("apigee_api_proxy.foo_api_proxy", "foo_proxy_terraformed_updated"),
 					resource.TestCheckResourceAttr(
@@ -79,6 +88,26 @@ resource "apigee_api_proxy" "foo_api_proxy" {
    name  		= "foo_proxy_terraformed_updated"
    bundle       = "test-fixtures/helloworld_proxy.zip"
    bundle_sha   = "${base64sha256(file("test-fixtures/helloworld_proxy.zip"))}"
+}
+`
+
+/*
+ * Make possible to test with TF 0.12: file function can load only text files. New function was introduced for the usecase below.
+ * For more details see: https://github.com/hashicorp/terraform/issues/21260
+ */
+const testAccCheckProxyConfigRequiredTF12 = `
+resource "apigee_api_proxy" "foo_api_proxy" {
+   name  		= "foo_proxy_terraformed"
+   bundle       = "test-fixtures/helloworld_proxy.zip"
+   bundle_sha   = filebase64sha256("test-fixtures/helloworld_proxy.zip")
+}
+`
+
+const testAccCheckProxyConfigUpdatedTF12 = `
+resource "apigee_api_proxy" "foo_api_proxy" {
+   name  		= "foo_proxy_terraformed_updated"
+   bundle       = "test-fixtures/helloworld_proxy.zip"
+   bundle_sha   = filebase64sha256("test-fixtures/helloworld_proxy.zip")
 }
 `
 
