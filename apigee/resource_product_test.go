@@ -2,12 +2,13 @@ package apigee
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/zambien/go-apigee-edge"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/zambien/go-apigee-edge"
 )
 
 func TestAccProduct_Updated(t *testing.T) {
@@ -111,7 +112,7 @@ resource "apigee_product" "foo_product" {
 
    scopes = ["READ"]
 
-   attributes {
+   attributes = {
       access = "public"
 
       custom1 = "customval1"
