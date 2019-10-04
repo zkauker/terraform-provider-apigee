@@ -2,12 +2,13 @@ package apigee
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/zambien/go-apigee-edge"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/zambien/go-apigee-edge"
 )
 
 func TestAccTargetServer_Updated(t *testing.T) {
@@ -23,7 +24,7 @@ func TestAccTargetServer_Updated(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "name", "foo_target_server"),
 					resource.TestCheckResourceAttr(
-						"apigee_target_server.foo", "host", "http://some.api.com"),
+						"apigee_target_server.foo", "host", "some.api.com"),
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "env", "test"),
 					resource.TestCheckResourceAttr(
@@ -31,9 +32,9 @@ func TestAccTargetServer_Updated(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "port", "80"),
 					resource.TestCheckResourceAttr(
-						"apigee_target_server.foo", "ssl_info.0.ssl_enabled", "0"),
+						"apigee_target_server.foo", "ssl_info.0.ssl_enabled", "false"),
 					resource.TestCheckResourceAttr(
-						"apigee_target_server.foo", "ssl_info.0.client_auth_enabled", "0"),
+						"apigee_target_server.foo", "ssl_info.0.client_auth_enabled", "false"),
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "ssl_info.0.ignore_validation_errors", "false"),
 				),
@@ -45,7 +46,7 @@ func TestAccTargetServer_Updated(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "name", "foo_target_server_updated"),
 					resource.TestCheckResourceAttr(
-						"apigee_target_server.foo", "host", "https://some.updatedapi.com"),
+						"apigee_target_server.foo", "host", "some.updatedapi.com"),
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "env", "test"),
 					resource.TestCheckResourceAttr(
@@ -53,9 +54,9 @@ func TestAccTargetServer_Updated(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "port", "443"),
 					resource.TestCheckResourceAttr(
-						"apigee_target_server.foo", "ssl_info.0.ssl_enabled", "1"),
+						"apigee_target_server.foo", "ssl_info.0.ssl_enabled", "true"),
 					resource.TestCheckResourceAttr(
-						"apigee_target_server.foo", "ssl_info.0.client_auth_enabled", "1"),
+						"apigee_target_server.foo", "ssl_info.0.client_auth_enabled", "true"),
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "ssl_info.0.key_store", "freetrial"),
 					resource.TestCheckResourceAttr(
@@ -65,9 +66,9 @@ func TestAccTargetServer_Updated(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"apigee_target_server.foo", "ssl_info.0.ignore_validation_errors", "true"),
 					resource.TestCheckResourceAttr(
-						"apigee_target_server.foo", "ssl_info.0.ciphers.0", "AES256"),
+						"apigee_target_server.foo", "ssl_info.0.ciphers.0", "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"),
 					resource.TestCheckResourceAttr(
-						"apigee_target_server.foo", "ssl_info.0.protocols.0", "https"),
+						"apigee_target_server.foo", "ssl_info.0.protocols.0", "TLSv1.2"),
 				),
 			},
 		},
@@ -98,7 +99,7 @@ func testAccCheckTargetServerExists(n string, name string) resource.TestCheckFun
 const testAccCheckTargetServerConfigRequired = `
 resource "apigee_target_server" "foo" {
   name = "foo_target_server"
-  host = "http://some.api.com"
+  host = "some.api.com"
   env = "test"
   enabled = true
   port = 80
@@ -114,7 +115,7 @@ resource "apigee_target_server" "foo" {
 const testAccCheckTargetServerConfigUpdated = `
 resource "apigee_target_server" "foo" {
   name = "foo_target_server_updated"
-  host = "https://some.updatedapi.com"
+  host = "some.updatedapi.com"
   env = "test"
   enabled = false
   port = 443
@@ -126,8 +127,8 @@ resource "apigee_target_server" "foo" {
     trust_store = "freetrial"
     key_alias = "freetrial"
     ignore_validation_errors = true # don't really do this...
-    ciphers = ["AES256"]
-    protocols = ["https"]
+    ciphers = ["TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"]
+    protocols = ["TLSv1.2"]
   }
 }
 `
