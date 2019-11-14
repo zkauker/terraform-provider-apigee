@@ -2,12 +2,13 @@ package apigee
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/zambien/go-apigee-edge"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/zambien/go-apigee-edge"
 )
 
 func TestAccProxyDeployment_Updated(t *testing.T) {
@@ -71,7 +72,14 @@ func testAccCheckProxyDeploymentExists(n string, name string) resource.TestCheck
 }
 
 const testAccCheckProxyDeploymentConfigRequired = `
+resource "apigee_api_proxy" "helloworld_proxy" {
+   name         = "helloworld"
+   bundle       = "./test-fixtures/helloworld_proxy.zip"
+   bundle_sha   = "123abc"
+}
+
 resource "apigee_api_proxy_deployment" "foo_api_proxy_deployment" {
+   depends_on   = [apigee_api_proxy.helloworld_proxy]
    proxy_name   = "helloworld"
    org          = "zambien-trial"
    env          = "test"
@@ -80,7 +88,14 @@ resource "apigee_api_proxy_deployment" "foo_api_proxy_deployment" {
 `
 
 const testAccCheckProxyDeploymentConfigUpdated = `
+resource "apigee_api_proxy" "helloworld_proxy" {
+   name         = "helloworld"
+   bundle       = "./test-fixtures/helloworld_proxy.zip"
+   bundle_sha   = "123bcd"
+}
+
 resource "apigee_api_proxy_deployment" "foo_api_proxy_deployment" {
+   depends_on   = [apigee_api_proxy.helloworld_proxy]
    proxy_name   = "helloworld"
    org          = "zambien-trial"
    env          = "test"
