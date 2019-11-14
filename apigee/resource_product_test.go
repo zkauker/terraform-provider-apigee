@@ -97,7 +97,14 @@ resource "apigee_product" "foo_product" {
 `
 
 const testAccCheckProductConfigUpdated = `
+resource "apigee_api_proxy" "helloworld_proxy" {
+   name         = "helloworld"
+   bundle       = "./test-fixtures/helloworld_proxy.zip"
+   bundle_sha   = "123abc"
+}
+
 resource "apigee_product" "foo_product" {
+   depends_on = [apigee_api_proxy.helloworld_proxy]
    name = "foo_product_updated"
    display_name = "foo_product_updated_different"
    description = "no one ever fills this out"
